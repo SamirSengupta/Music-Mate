@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, send_file
+from flask import Flask, render_template, request, redirect, url_for
 from pytube import YouTube
 import os
 import platform
@@ -7,13 +7,11 @@ import re
 from youtubesearchpython import VideosSearch
 import base64
 
-
 app = Flask(__name__)
 
 # Spotify API credentials
 client_id = '0ee393dc28944766855298a4da69e4d4'
 client_secret = 'e86ba0783d444176abb20514cefb3674'
-
 
 # Function to get Spotify access token
 def get_access_token():
@@ -26,11 +24,9 @@ def get_access_token():
     access_token = json_response['access_token']
     return access_token
 
-
 # Function to encode client_id and client_secret for Authorization header
 def base64_encode(s):
     return base64.b64encode(s.encode('utf-8')).decode('utf-8')
-
 
 def get_track_ids(url):
     # Extract the track IDs from the Spotify playlist URL or individual Spotify music URL
@@ -43,7 +39,6 @@ def get_track_ids(url):
     else:
         raise ValueError("Invalid Spotify URL.")
 
-
 def extract_playlist_id(url):
     # Extract the playlist ID from the Spotify playlist URL
     match = re.search(r'playlist\/([\w]+)', url)
@@ -53,7 +48,6 @@ def extract_playlist_id(url):
     else:
         raise ValueError("Invalid Spotify playlist URL.")
 
-
 def extract_track_id(url):
     # Extract the track ID from the individual Spotify music URL
     match = re.search(r'track\/([\w]+)', url)
@@ -62,7 +56,6 @@ def extract_track_id(url):
         return track_id
     else:
         raise ValueError("Invalid Spotify music URL.")
-
 
 def get_track_ids_from_playlist(playlist_id):
     # Get the track IDs from the Spotify playlist using the Spotify API
@@ -76,7 +69,6 @@ def get_track_ids_from_playlist(playlist_id):
     track_ids = [item['track']['id'] for item in json_response['items']]
 
     return track_ids
-
 
 def get_music_name(track_id):
     # Get the music name and artist from the Spotify API using the track ID
@@ -95,10 +87,9 @@ def get_music_name(track_id):
 
     return search_query
 
-
 def search_on_youtube(query):
     # Search for the given query on YouTube using youtube-search-python
-    videos_search = VideosSearch(query, limit=1)
+    videos_search = VideosSearch(query,limit= 1)
     results = videos_search.result()
 
     if results['result']:
@@ -108,11 +99,9 @@ def search_on_youtube(query):
 
     return None
 
-
 @app.route('/')
 def index():
     return render_template('index.html')
-
 
 @app.route('/download', methods=['POST'])
 def download():
@@ -124,9 +113,8 @@ def download():
             video = YouTube(url)
             audio_stream = video.streams.filter(only_audio=True).first()
             output_folder = get_download_folder()
-            output_path = os.path.join(output_folder, audio_stream.default_filename)
-            audio_stream.download(output_path=output_path)
-            return redirect(url_for('download_completed', filename=audio_stream.default_filename))
+            audio_stream.download(output_path=output_folder)
+            return redirect(url_for('download_completed'))
         elif 'spotify.com' in url:
             # Download from Spotify URL
             track_ids = get_track_ids(url)
@@ -143,29 +131,20 @@ def download():
                     # Download the audio from YouTube
                     video = YouTube(youtube_url)
                     audio_stream = video.streams.filter(only_audio=True).first()
-                    output_path = os.path.join(output_folder, audio_stream.default_filename)
-                    audio_stream.download(output_path=output_path)
+                    audio_stream.download(output_path=output_folder)
                 else:
                     print(f"No matching video found on YouTube for track ID: {track_id}")
 
-            return redirect(url_for('download_completed', filename=audio_stream.default_filename))
+            return redirect(url_for('download_completed'))
         else:
             return "Invalid URL."
 
     except Exception as e:
         return f"An error occurred: {str(e)}"
 
-
 @app.route('/download_completed')
 def download_completed():
-    filename = request.args.get('filename')
-    if filename:
-        file_path = os.path.join(get_download_folder(), filename)
-        return send_file(file_path, as_attachment=True)
-    else:
-        return "Download completed."
-
-
+    return render_template('download.html')
 
 def get_download_folder():
     system = platform.system()
@@ -178,6 +157,6 @@ def get_download_folder():
     else:
         raise RuntimeError("Unsupported operating system")
 
-
 if __name__ == '__main__':
-    app.run(debug=True, host = '0.0.0.0')
+    app.run(debug=True)
+
