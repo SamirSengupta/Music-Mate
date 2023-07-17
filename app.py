@@ -1,13 +1,23 @@
-from flask import Flask, render_template, request, redirect, url_for
-from pytube import YouTube
+from flask import Flask, render_template, request, redirect, send_file
 import os
-import platform
+from pytube import YouTube
 import requests
 import re
 from youtubesearchpython import VideosSearch
 import base64
+import firebase_admin
+from firebase_admin import credentials, storage
+import datetime
 
 app = Flask(__name__)
+
+# Firebase Admin SDK initialization
+cred = credentials.Certificate('credentials.json')
+firebase_admin.initialize_app(cred, {
+    'storageBucket': 'music-mate-20.appspot.com'
+})
+
+bucket = storage.bucket()
 
 # Spotify API credentials
 client_id = '0ee393dc28944766855298a4da69e4d4'
@@ -89,7 +99,7 @@ def get_music_name(track_id):
 
 def search_on_youtube(query):
     # Search for the given query on YouTube using youtube-search-python
-    videos_search = VideosSearch(query,limit= 1)
+    videos_search = VideosSearch(query, limit=1)
     results = videos_search.result()
 
     if results['result']:
@@ -99,64 +109,69 @@ def search_on_youtube(query):
 
     return None
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
+    if request.method == 'POST':
+        url = request.form['url']
+
+        try:
+            if 'youtube.com' in url:
+                # Download from YouTube URL
+                video = YouTube(url)
+                audio_stream = video.streams.filter(only_audio=True).first()
+                file_path = os.path.join(os.path.expanduser('~'), 'Downloads', audio_stream.default_filename)
+                audio_stream.download(output_path=os.path.join(os.path.expanduser('~'), 'Downloads'), filename=audio_stream.default_filename)
+                # Save the file to Firebase Storage
+                firebase_url = save_file_to_firebase(audio_stream.default_filename, file_path)
+                return redirect('/')
+            elif 'spotify.com' in url:
+                # Download from Spotify URL
+                track_ids = get_track_ids(url)
+
+                for track_id in track_ids:
+                    # Get the music name from the Spotify API
+                    music_name = get_music_name(track_id)
+
+                    # Search for the music on YouTube
+                    youtube_url = search_on_youtube(music_name)
+
+                    if youtube_url:
+                        # Download the audio from YouTube
+                        video = YouTube(youtube_url)
+                        audio_stream = video.streams.filter(only_audio=True).first()
+                        file_path = os.path.join(os.path.expanduser('~'), 'Downloads', audio_stream.default_filename)
+                        audio_stream.download(output_path=os.path.join(os.path.expanduser('~'), 'Downloads'), filename=audio_stream.default_filename)
+                        # Save the file to Firebase Storage
+                        firebase_url = save_file_to_firebase(audio_stream.default_filename, file_path)
+                    else:
+                        print(f"No matching video found on YouTube for track ID: {track_id}")
+
+                return redirect('/')
+            else:
+                return "Invalid URL."
+
+        except Exception as e:
+            return f"An error occurred: {str(e)}"
+
     return render_template('index.html')
 
-@app.route('/download', methods=['POST'])
-def download():
-    url = request.form['url']
+def save_file_to_firebase(filename, file_path):
+    blob = bucket.blob(filename)
+    blob.upload_from_filename(file_path)
+    download_url = blob.generate_signed_url(
+        version='v4',
+        expiration=datetime.timedelta(minutes=15),  # Set the expiration time for the URL
+        method='GET'
+    )
+    return download_url
 
-    try:
-        if 'youtube.com' in url:
-            # Download from YouTube URL
-            video = YouTube(url)
-            audio_stream = video.streams.filter(only_audio=True).first()
-            output_folder = get_download_folder()
-            audio_stream.download(output_path=output_folder)
-            return redirect(url_for('download_completed'))
-        elif 'spotify.com' in url:
-            # Download from Spotify URL
-            track_ids = get_track_ids(url)
-
-            output_folder = get_download_folder()
-            for track_id in track_ids:
-                # Get the music name from the Spotify API
-                music_name = get_music_name(track_id)
-
-                # Search for the music on YouTube
-                youtube_url = search_on_youtube(music_name)
-
-                if youtube_url:
-                    # Download the audio from YouTube
-                    video = YouTube(youtube_url)
-                    audio_stream = video.streams.filter(only_audio=True).first()
-                    audio_stream.download(output_path=output_folder)
-                else:
-                    print(f"No matching video found on YouTube for track ID: {track_id}")
-
-            return redirect(url_for('download_completed'))
-        else:
-            return "Invalid URL."
-
-    except Exception as e:
-        return f"An error occurred: {str(e)}"
-
-@app.route('/download_completed')
-def download_completed():
-    return render_template('download.html')
-
-def get_download_folder():
-    system = platform.system()
-    if system == "Windows":
-        return os.path.join(os.path.expanduser("~"), "Downloads")
-    elif system == "Linux":
-        return os.path.join(os.path.expanduser("~"), "Downloads")
-    elif system == "Darwin":  # macOS
-        return os.path.join(os.path.expanduser("~"), "Downloads")
-    else:
-        raise RuntimeError("Unsupported operating system")
+@app.route('/download/<filename>', methods=['GET'])
+def download_file(filename):
+    # Generate the download URL for the given filename in Firebase Storage
+    blob = bucket.blob(filename)
+    file_path = os.path.join(os.path.expanduser('~'), 'Downloads', filename)
+    blob.download_to_filename(file_path)
+    return send_file(file_path, as_attachment=True)
 
 if __name__ == '__main__':
     app.run(debug=True)
-

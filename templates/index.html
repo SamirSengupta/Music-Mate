@@ -2,99 +2,219 @@
 <html lang="en">
 
 <head>
-    <link rel="icon" href="{{ url_for('static', filename='images/logo1.png') }}" type="image/png" />
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
     <title>Music Mate</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shorthandcss@1.1.1/dist/shorthand.min.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Muli:200,300,400,500,600,700,800,900&display=swap" />
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.css" />
-    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Libraries Stylesheet -->
+    <link href="static\animate.min.css" rel="stylesheet">
+    <link href="static\bootstrap.min.css" rel="stylesheet">
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="static\bootstrap.min.css" rel="stylesheet">
+    <!-- Template Stylesheet -->
+    <link href="static\style.css" rel="stylesheet">
+    <style>
+        /* Scrollbar Styles */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background-color: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: grey;
+            border-radius: 10px;
+        }
+
+        /* Scrollbar Hover Styles */
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: #1e549f;
+        }
+    </style>
 </head>
 
-<body class="bg-black muli">
-    <nav class="w-100pc flex flex-column md-flex-row md-px-10 py-5 bg-black">
-        <div class="flex justify-between">
-            <a href="#" class="flex items-center p-2 mr-4 no-underline">
-                <img class="max-h-l2 w-auto" src="{{ url_for('static', filename='images/logo.png') }}" />
-
-
-            </a>
-            <a data-toggle="toggle-nav" data-target="#nav-items" href="#"
-                class="flex items-center ml-auto md-hidden indigo-lighter opacity-50 hover-opacity-100 ease-300 p-1 m-3">
-                <i data-feather="menu"></i>
-            </a>
+<body>
+    <!-- Spinner Start -->
+    <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-border text-custom" style="width: 3rem; height: 3rem;" role="status">
+            <span class="sr-only">Loading...</span>
         </div>
-        <div id="nav-items" class="hidden flex sm-w-100pc flex-column md-flex md-flex-row md-justify-end items-center">
-            <a href="#home" class="fs-s1 mx-3 py-3 indigo no-underline hover-underline">Music Mate</a>
-            <a href="#features" class="fs-s1 mx-3 py-3 indigo no-underline hover-underline">Developers</a>
-        </div>
-    </nav>
-
-    <!-- hero section -->
-    <section id="home" class="min-h-100vh flex justify-center items-center">
-        <div class="mx-5 md-mx-l5">
-            <div class="inline-block br-round bg-indigo-30 indigo-lightest p-2 fs-s2 mb-5">
-                <div class="inline-block bg-indigo indigo-lightest br-round px-3 py-1 mr-3 fs-s3">Follow Us</div>
-                on LinkedIn
-            </div>
-            <div>
-                <h1 class="white fs-l3 lh-2 md-fs-xl1 md-lh-1 fw-900 ">Music Mate<br />The Music Saviour</h1>
-                <div class="br-8 mt-10 inline-flex">
-                    <form method="POST" action="/download">
-                        <input type="text"
-                            class="input-lg half bw-0 fw-200 bg-indigo-lightest-10 white ph-indigo-lightest focus-white opacity-80 fs-s3 py-5 min-w-25vw br-r-0"
-                            placeholder="Enter the URL" name="url">
-                        <button
-                            class="button-lg bg-indigo-lightest-20 indigo-lightest focus-white fw-300 fs-s3 mr-0 br-l-0 ml-4">Download</button>
-                    </form>
+    </div>
+    <!-- Spinner End -->
+    <!-- Navbar & Hero Start -->
+    <div class="container-fluid position-relative p-0">
+        <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="fa fa-bars"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <div class="navbar-nav ms-auto py-0">
+                    <a href="#" id="developers-link" class="nav-item nav-link text-white">Developer</a>
+                    <a href="#" id="services-link" class="nav-item nav-link text-white">Development</a>
                 </div>
-                <div class="white opacity-20 fs-s3 mt-3">No credit card required</div>
             </div>
-        </div>
-    </section>
-
-    <!-- features -->
-    <section id="features" class="p-10 md-p-l5">
-        <div class="flex flex-column md-flex-row mx-auto">
-            <div class="w-100pc md-w-40pc">
-                <div class="br-8 p-5 m-5">
-                    <div class="flex justify-center items-center bg-indigo-lightest-10 white w-l5 h-l5 br-round mb-5">
-                        <img src="{{ url_for('static', filename='images/Samir_Sengupta.jpeg') }}" alt="Samir Sengupta" class="w-l5">
+        </nav>
+    </div>
+    <div class="container-fluid bg-primary py-5 mb-5 hero-header">
+        <div class="container py-5">
+            <div class="row justify-content-center py-5">
+                <div class="col-lg-10 pt-lg-5 mt-lg-5 text-center">
+                    <h1 class="display-3 text-white mb-3 animated slideInDown">Music Mate</h1>
+                    <p class="fs-4 text-white mb-4 animated slideInDown">Your Song Saviour</p>
+                    <div class="position-relative w-75 mx-auto animated slideInDown">
+                        <form method="POST">
+                            <input class="form-control border-0 rounded-pill w-100 py-3 ps-4 pe-5" type="text" name="url" placeholder="Spotify or YouTube URL">
+                            <button id="download-btn" type="submit" class="btn btn-custom rounded-pill py-2 px-4 position-absolute top-0 end-0 me-2" style="margin-top: 7px;">Download</button>
+                        </form>
                     </div>
-                    
-                    <h4 class="white fw-600 fs-m3 mb-5">Samir Sengupta</h4>
-                    <div class="indigo-lightest fw-600 fs-m1 opacity-50">Backend and Frontend Developer</div>
-                    <a href="https://www.linkedin.com/in/samir-sengupta-081493214/" target="_blank"
-                        class="mt-5 button bg-indigo-lightest-10 fs-s3 white no-underline hover-opacity-100 hover-scale-up-1 ease-300">Read</a>
-                </div>
-            </div>
-            <div class="w-100pc md-w-40pc">
-                <div class="br-8 p-5 m-5">
-                    <div class="flex justify-center items-center bg-indigo-lightest-10 white w-l5 h-l5 br-round mb-5">
-                        <img src="{{ url_for('static', filename='images/sowmiah_nadar.jpg') }}" alt="Sowmiah Nadar" class="w-l5">
-                    </div>
-                    
-                    <h4 class="white fw-600 fs-m3 mb-5">Sowmiah Nadar</h4>
-                    <div class="indigo-lightest fw-600 fs-m1 opacity-50">Frontend Designer.</div>
-                    <a href="https://www.linkedin.com/in/sowmiah-nadar-0b9a77213/" target="_blank"
-                        class="mt-5 button bg-indigo-lightest-10 fs-s3 white no-underline hover-opacity-100 hover-scale-up-1 ease-300">Read</a>
                 </div>
             </div>
         </div>
-    </section>
-
-    <footer>
-        <!-- Your footer content here -->
-    </footer>
-
+    </div>
+    <!-- Navbar & Hero End -->
+    <!-- About Start -->
+    <div class="container-xxl py-5" id="about-section">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.3s" id="developers-section">
+                    <!-- Content of the developers section -->
+                    <div class="position-relative h-100">
+                        <img class="img-fluid position-absolute w-100 h-100" src="static\about.jpg" alt="" style="object-fit: cover;">
+                    </div>
+                </div>
+                <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.3s">
+                    <h6 class="section-title bg-white text-start text-custom pe-3">Developer</h6>
+                    <h1 class="text-custom m-0">Samir Sengupta</h1>
+                    <p class="mb-4">Passionate and skilled data scientist with expertise in statistics, programming, and machine learning, dedicated to leveraging data to drive informed business decisions.</p>
+                    <p class="mb-4"> Committed to continuous learning and delivering high-quality work, seeking opportunities to collaborate and make a meaningful impact in the field of data science.</p>
+                    <div class="row gy-2 gx-4 mb-4">
+                        <div class="col-sm-6">
+                            <p class="mb-0"><i class="fa fa-arrow-right text-custom me-2"></i>Machine Learning</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p class="mb-0"><i class="fa fa-arrow-right text-custom me-2"></i>Data Analyst</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p class="mb-0"><i class="fa fa-arrow-right text-custom me-2"></i>Research Analyst</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p class="mb-0"><i class="fa fa-arrow-right text-custom me-2"></i>Python Developer</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p class="mb-0"><i class="fa fa-arrow-right text-custom me-2"></i>Data Visualization</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p class="mb-0"><i class="fa fa-arrow-right text-custom me-2"></i>Communication</p>
+                        </div>
+                    </div>
+                    <a class="btn btn-custom py-3 px-5 mt-2" href="https://samirsengupta.github.io/SamirSengupta/">Read More</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- About End -->
+    <!-- Service Start -->
+    <div class="container-xxl py-5" id="services-section">
+        <div class="container">
+            <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+                <h6 class="section-title bg-white text-center px-3" style="color: #1e549f;">Development</h6>
+                <h1 class="mb-5">Development Tools</h1>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="service-item rounded pt-3">
+                        <div class="p-4">
+                            <h5>Spotify API</h5>
+                            <p>Music Mate incorporates the Spotify API to provide Spotify users with the ability to utilize its features.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.3s">
+                    <div class="service-item rounded pt-3">
+                        <div class="p-4">
+                            <h5>YouTube API</h5>
+                            <p>Music Mate integrates the YouTube API, allowing YouTube users to utilize the functionalities of the app.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.5s">
+                    <div class="service-item rounded pt-3">
+                        <div class="p-4">
+                            <h5>Python</h5>
+                            <p>Music Mate harness the power of Python to drive its functionalities, making it a robust application.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.7s">
+                    <div class="service-item rounded pt-3">
+                        <div class="p-4">
+                            <h5>Python Anywhere</h5>
+                            <p>Music Mate is hosted on PythonAnywhere, providing a reliable platform for its deployment and operation.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Service End -->
+    <div class="container">
+        <div class="copyright">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                    &copy; <a class="border-bottom text-decoration-none" href="#"><span class="text-normal">Music Mate</span></a>, All Right Reserved.
+                    <!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->
+                    Designed By <a class="border-bottom text-decoration-none" href="https://samirsengupta.github.io/SamirSengupta/"><span class="text-normal">Samir Sengupta</span></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer End -->
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-lg btn-custom btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://unpkg.com/feather-icons"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/cferdinandi/smooth-scroll@15.0.0/dist/smooth-scroll.polyfills.min.js"></script>
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="static\wow.min.js"></script>
+    <!-- Template Javascript -->
+    <script src="static\main.js"></script>
+    <script>
+        // Wait for the DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function () {
+            // Find the developers link by its id
+            var developersLink = document.getElementById('developers-link');
+            // Find the developers section by its id
+            var developersSection = document.getElementById('developers-section');
 
+            // Add a click event listener to the developers link
+            developersLink.addEventListener('click', function (event) {
+                event.preventDefault(); // Prevent the default link behavior
+                developersSection.scrollIntoView({ behavior: 'smooth' }); // Scroll to the developers section
+            });
+
+            // Find the services link by its id
+            var servicesLink = document.getElementById('services-link');
+            // Find the services section by its id
+            var servicesSection = document.getElementById('services-section');
+
+            // Add a click event listener to the services link
+            servicesLink.addEventListener('click', function (event) {
+                event.preventDefault(); // Prevent the default link behavior
+                servicesSection.scrollIntoView({ behavior: 'smooth' }); // Scroll to the services section
+            });
+        });
+</script>
 </body>
 
 </html>
-
